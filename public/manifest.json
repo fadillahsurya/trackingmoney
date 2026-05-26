@@ -1,0 +1,17 @@
+{
+  "name": "Keuangan Bersama",
+  "short_name": "Keuangan",
+  "description": "Aplikasi pencatatan keuangan bersama pasangan.",
+  "start_url": "/app/dashboard",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#f8fafc",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

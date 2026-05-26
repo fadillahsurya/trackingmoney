@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Keuangan Bersama
 
-## Getting Started
+Keuangan Bersama adalah PWA private untuk mencatat keuangan bersama pasangan dalam satu household maksimal 2 user. Aplikasi hanya menyimpan data shared finance: kontribusi dana bersama, pengeluaran bersama, budget bulanan, transaksi rutin, dan target tabungan bersama.
 
-First, run the development server:
+Tidak ada fitur personal income, tidak ada tabel income pribadi, dan tidak ada dashboard gaji pasangan.
+
+## Fitur Utama
+
+- Auth login, register, logout dengan Supabase Auth
+- Household maksimal 2 anggota dengan invite code
+- CRUD transaksi bersama
+- Budget bulanan dan kalkulasi aman sampai akhir bulan
+- Dashboard status keuangan, grafik harian, dan grafik kategori
+- Transaksi rutin bulanan dengan log paid/skipped agar tidak double input
+- Target tabungan bersama dan kontribusi tabungan
+- PWA sederhana untuk Add to Home Screen
+
+## Tech Stack
+
+- Next.js App Router
+- TypeScript
+- Tailwind CSS
+- Supabase Auth dan Postgres
+- Supabase Row Level Security
+- Recharts
+- Vercel
+
+## Environment Variables
+
+Buat `.env.local`:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+NEXT_PUBLIC_SUPABASE_URL=https://PROJECT_ID.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_xxx
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Jangan gunakan service role key di client. Jangan commit secret key.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Untuk Vercel, masukkan variable yang sama di **Project Settings > Environment Variables**.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Setup Local
 
-## Learn More
+```bash
+npm install
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Buka:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```text
+http://localhost:3000
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Route utama:
 
-## Deploy on Vercel
+```text
+/login
+/register
+/app/dashboard
+/app/transactions
+/app/recurring
+/app/savings
+/app/settings
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Setup Supabase
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Buka Supabase Dashboard.
+2. Pilih project.
+3. Buka SQL Editor.
+4. Buka file `supabase/migrations/202605260001_initial_schema.sql`.
+5. Copy seluruh isi file SQL, bukan path filenya.
+6. Paste ke SQL Editor.
+7. Klik Run.
+
+File migration membuat tabel, RLS policies, seed helper kategori default, RPC join household, RPC recurring paid/skipped, dan RPC kontribusi tabungan.
+
+## Deploy Vercel
+
+1. Push repo ke GitHub.
+2. Import project di Vercel.
+3. Isi environment variables:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+4. Deploy.
+5. Pastikan Supabase Auth URL configuration mengizinkan domain Vercel.
+
+## Catatan Security
+
+- RLS aktif di semua tabel household.
+- Query aplikasi selalu berdasarkan household aktif.
+- Service role key tidak digunakan di browser.
+- Income pribadi tidak disimpan.
+- Data household lain tidak boleh terbaca oleh user yang bukan member.
+
+## QA
+
+Checklist manual tersedia di:
+
+```text
+docs/QA_CHECKLIST.md
+```
+
+## Roadmap Singkat
+
+- Kategori custom penuh
+- Notifikasi webhook
+- PWA offline ringan
+- Penyempurnaan laporan bulanan
