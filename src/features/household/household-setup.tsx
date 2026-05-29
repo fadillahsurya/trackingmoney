@@ -28,6 +28,23 @@ export function HouseholdSetup({ userId }: HouseholdSetupProps) {
     setMessage(null);
     setErrorMessage(null);
 
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      setIsCreating(false);
+      setErrorMessage(
+        "Sesi browser tidak ditemukan. Silakan coba logout lalu login kembali untuk menyegarkan sesi."
+      );
+      return;
+    }
+
+    if (session.user.id !== userId) {
+      setIsCreating(false);
+      setErrorMessage(
+        `User ID tidak cocok! Client: ${session.user.id}, Server: ${userId}`
+      );
+      return;
+    }
+
     const generatedInviteCode = createInviteCode();
 
     const { data: household, error: householdError } = await supabase
