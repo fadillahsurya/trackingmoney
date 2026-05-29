@@ -47,21 +47,20 @@ export function HouseholdSetup({ userId }: HouseholdSetupProps) {
 
     const generatedInviteCode = createInviteCode();
 
-    const { data: household, error: householdError } = await supabase
+    const householdId = crypto.randomUUID();
+
+    const { error: householdError } = await supabase
       .from("households")
       .insert({
+        id: householdId,
         name: householdName.trim(),
         invite_code: generatedInviteCode,
         owner_id: userId,
-      })
-      .select("id")
-      .single();
+      });
 
-    if (householdError || !household) {
+    if (householdError) {
       setIsCreating(false);
-      const detailedError = householdError
-        ? `${householdError.message} (Detail: ${householdError.details || "none"}, Hint: ${householdError.hint || "none"})`
-        : "Household belum berhasil dibuat.";
+      const detailedError = `${householdError.message} (Detail: ${householdError.details || "none"}, Hint: ${householdError.hint || "none"})`;
       setErrorMessage(detailedError);
       return;
     }
@@ -69,7 +68,7 @@ export function HouseholdSetup({ userId }: HouseholdSetupProps) {
     const { error: memberError } = await supabase
       .from("household_members")
       .insert({
-        household_id: household.id,
+        household_id: householdId,
         user_id: userId,
         role: "owner",
       });
@@ -81,7 +80,7 @@ export function HouseholdSetup({ userId }: HouseholdSetupProps) {
     }
 
     await supabase.rpc("seed_default_categories", {
-      target_household_id: household.id,
+      target_household_id: householdId,
     });
 
     setIsCreating(false);
