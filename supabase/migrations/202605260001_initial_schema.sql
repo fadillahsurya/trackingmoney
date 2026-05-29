@@ -114,7 +114,7 @@ create table if not exists public.recurring_transaction_logs (
   constraint recurring_transaction_logs_once_per_month_key unique (recurring_transaction_id, month, year)
 );
 
- if not exists public.notification_settings (
+create table if not exists public.notification_settings (
   id uuid primary key default gen_random_uuid(),
   household_id uuid not null unique references public.households(id) on delete cascade,
   channel text,
