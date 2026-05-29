@@ -59,9 +59,10 @@ export function HouseholdSetup({ userId }: HouseholdSetupProps) {
 
     if (householdError || !household) {
       setIsCreating(false);
-      setErrorMessage(
-        householdError?.message ?? "Household belum berhasil dibuat.",
-      );
+      const detailedError = householdError
+        ? `${householdError.message} (Detail: ${householdError.details || "none"}, Hint: ${householdError.hint || "none"})`
+        : "Household belum berhasil dibuat.";
+      setErrorMessage(detailedError);
       return;
     }
 
